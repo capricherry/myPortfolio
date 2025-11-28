@@ -18,6 +18,8 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import Hero from './.vitepress/theme/1. hero-section/HeroSection.vue'
 
+import FrameworksSection from './.vitepress/theme/3. frameworks-section/FrameworksSection.vue'
+
 const { isDark } = useData()
 
 onMounted(() => {
@@ -30,4 +32,5 @@ onBeforeUnmount(() => {
 </script>
 <div class="VPHome">
   <Hero/>
+  <FrameworksSection />
 </div>

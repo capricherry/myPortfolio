@@ -478,6 +478,7 @@ onMounted(() => {
           width="20"
           height="20"
           :class="{ uwu: isUwu }"
+          
         />
     </div>
   </div>

@@ -9,10 +9,10 @@ const {Layout} = DefaultTheme;
 
 <template>
   <Layout>
-    <template #home-features-before>
+    <!-- <template #home-features-before>
       <ExamplesGrid />
 
-    </template>
+    </template> -->
 
   </Layout>
 </template>
