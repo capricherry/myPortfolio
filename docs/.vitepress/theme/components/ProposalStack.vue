@@ -1,4 +1,3 @@
-
 <template>
   <div
     ref="containerRef"
@@ -7,7 +6,7 @@
     <a
       v-for="card in cards"
       :key="card.route"
-      :href="card.route"
+      :href="withBase(card.route)"
       class="group flex flex-col sm:flex-row w-full mb-6 rounded-xl overflow-hidden border border-gray-300 bg-white shadow-sm 
              transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 
              focus:ring-gray-400"
@@ -52,14 +51,15 @@
 
 <script setup>
 import { ref } from 'vue'
+import { withBase } from 'vitepress'
 
 const markdownFiles = import.meta.glob('../../../works/**/index.md', {
   as: 'raw',
-  eager: true,
+  eager: true
 })
 const imageFiles = import.meta.glob('../../../works/**/cover.{jpg,jpeg,png,webp}', {
   eager: true,
-  import: 'default',
+  import: 'default'
 })
 
 const cards = ref([])
@@ -84,7 +84,7 @@ for (const path in markdownFiles) {
     name: nameLine?.replace(/^## /, '') || 'Anonymous',
     excerpt: excerptLine || '',
     route,
-    image: imageKey ? imageFiles[imageKey] : null,
+    image: imageKey ? imageFiles[imageKey] : null
   })
 }
 </script>
