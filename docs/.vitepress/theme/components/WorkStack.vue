@@ -1,16 +1,23 @@
 <template>
-  <div
-    ref="containerRef"
-    class="bg-gray-100 mx-auto w-full max-w-6xl p-6 rounded-2xl border border-gray-300"
-  >
-    <a
-      v-for="card in cards"
-      :key="card.slug"
-      :href="withBase(card.route)"
-      class="group flex flex-col sm:flex-row w-full mb-6 rounded-xl overflow-hidden border border-gray-300 bg-white shadow-sm 
-             transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 
-             focus:ring-gray-400"
-    >
+  <div ref="containerRef" class="w-full">
+    <!-- Carousel (full-width) -->
+    <Carousel
+      :slides="slides"
+      autoplay
+      :interval="5000"
+      loop
+      class="mb-8"
+    />
+
+    <div class="bg-gray-100 w-full p-6 rounded-2xl border border-gray-300">
+      <a
+        v-for="card in cards"
+        :key="card.slug"
+        :href="withBase(card.route)"
+        class="group flex flex-col sm:flex-row w-full mb-6 rounded-xl overflow-hidden border border-gray-300 bg-white shadow-sm 
+               transition-all duration-300 hover:shadow-lg hover:scale-[1.02] focus:outline-none focus:ring-2 
+               focus:ring-gray-400"
+      >
       <!-- Cover Image -->
       <div
         class="w-full sm:w-1/5 min-w-[160px] max-w-[240px] h-48 sm:h-auto flex-shrink-0 object-center"
@@ -47,11 +54,13 @@
       </div>
     </a>
   </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { withBase } from 'vitepress'
+import Carousel from './Carousel.vue'
 
 type Card = {
   slug: string
@@ -63,7 +72,9 @@ type Card = {
 }
 
 const markdownFiles = import.meta.glob('../../../works/**/index.md', {
-  as: 'raw',
+  // `as: 'raw'` is deprecated — use `query: '?raw'` with `import: 'default'` to get the raw markdown string
+  query: '?raw',
+  import: 'default',
   eager: true,
 })
 const imageFiles = import.meta.glob('../../../works/**/cover.{jpg,jpeg,png,webp}', {
@@ -72,6 +83,10 @@ const imageFiles = import.meta.glob('../../../works/**/cover.{jpg,jpeg,png,webp}
 })
 
 const cards = ref<Card[]>([])
+
+const slides = computed(() =>
+  cards.value.map((c) => ({ title: c.title, subtitle: c.name, image: c.image, href: withBase(c.route) }))
+)
 
 for (const path in markdownFiles) {
   const raw = markdownFiles[path] as string
