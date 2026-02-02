@@ -103,10 +103,10 @@ for (const path in markdownFiles) {
         :data-slug="card.slug"
         :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)' }"
       >
-        <!-- centered content container -->
-        <div class="min-h-screen mx-auto w-full max-w-6xl px-8 md:px-16 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start text-white">
+        <!-- centered content container (reduced horizontal padding ~10%) -->
+        <div class="min-h-screen mx-auto w-full max-w-6xl px-4 md:px-8 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start text-white project-content">
       <!-- LEFT COLUMN: Text Content -->
-      <div class="flex flex-col justify-start">
+      <div :class="['flex flex-col justify-start', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']">
         <!-- Work Title and Author -->
         <div class="mb-8">
           <h2 class="text-5xl md:text-6xl font-bold mb-3">
@@ -142,11 +142,12 @@ for (const path in markdownFiles) {
       </div>
 
       <!-- RIGHT COLUMN: Large Hero Image -->
-      <div v-if="card.image" class="flex items-start">
+      <div v-if="card.image" :class="['flex items-start', card.slug === 'HeartOfGlass' ? 'md:order-1' : 'md:order-2']">
         <img
           :src="card.image"
           alt="cover image"
-          class="w-full h-auto object-cover"
+          :style="{ width: '90%' }"
+          class="h-auto object-cover mx-auto"
         />
       </div>
         </div>

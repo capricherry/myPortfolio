@@ -6,7 +6,7 @@ const nav = theme.value.nav || []
 </script>
 
 <template>
-  <header class="border-b border-black bg-white">
+  <header class="border-b border-black bg-black">
     <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
       <div class="text-lg font-bold tracking-tight">
         Portfolio

@@ -4,7 +4,7 @@
 
 html:has(.landing) {
   --vp-c-bg: #101010;
-  background-color: #101010;
+  background-color: #f7f7f7;
 }
 
 .landing {
@@ -35,7 +35,7 @@ html:has(.landing) {
     @media (min-width: 768px) {
       backdrop-filter: blur(10px);
       background: rgba(15, 15, 15, 0.8) !important;
-      border-bottom: 1px solid #262626 !important;
+      border-bottom: none !important;
     }
 
     .content-body {
@@ -49,7 +49,7 @@ html:has(.landing) {
   }
 
   .VPFooter {
-    border-top: 1px solid #262626 !important;
+    border-top: none !important;
     background: radial-gradient(circle at top center, #0f151a 30%, #000000 80%);
   }
 
