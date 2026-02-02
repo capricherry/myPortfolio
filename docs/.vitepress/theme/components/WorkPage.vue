@@ -104,50 +104,67 @@ for (const path in markdownFiles) {
         :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)' }"
       >
         <!-- centered content container (reduced horizontal padding ~10%) -->
-        <div class="min-h-screen mx-auto w-full max-w-6xl px-4 md:px-8 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start text-white project-content">
+        <div class="min-h-screen mx-auto w-full max-w-6xl px-2 md:px-4 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
       <!-- LEFT COLUMN: Text Content -->
-      <div :class="['flex flex-col justify-start', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']">
-        <!-- Work Title and Author -->
-        <div class="mb-8">
-          <h2 class="text-5xl md:text-6xl font-bold mb-3">
-            {{ card.title }}
-          </h2>
-          <h3 class="text-lg md:text-xl text-gray-400 font-medium">
-            {{ card.name }}
-          </h3>
+      <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']">
+        <!-- Top section: Title and content -->
+        <div class="flex flex-col justify-start">
+          <!-- Work Title and Author -->
+          <div class="mb-8">
+            <h2 class="text-5xl md:text-6xl font-bold mb-3">
+              {{ card.title }}
+            </h2>
+            <h3 class="text-lg md:text-xl text-gray-400 font-medium">
+              {{ card.name }}
+            </h3>
+          </div>
+
+          <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
+          <div class="work-content mb-12">
+            <component
+              v-if="card.component"
+              :is="card.component"
+              class="prose prose-invert prose-base md:prose-lg max-w-none prose-headings:text-white prose-p:text-gray-300"
+            />
+          </div>
         </div>
 
-        <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
-        <div class="work-content mb-12">
-          <component
-            v-if="card.component"
-            :is="card.component"
-            class="prose prose-invert prose-base md:prose-lg max-w-none prose-headings:text-white prose-p:text-gray-300"
-          />
-        </div>
-
-        <!-- Two smaller images side by side under text -->
-        <div v-if="card.allImages.length >= 2" class="grid grid-cols-2 gap-4 mt-8" style="height: 300px;">
-          <img
-            :src="card.slug === 'UpskirtQR' ? card.allImages[1] : card.allImages[0]"
-            :alt="`${card.title} image 1`"
-            class="w-full object-cover"
-          />
-          <img
-            :src="card.allImages[2] || card.allImages[1]"
-            :alt="`${card.title} image 2`"
-            class="w-full object-cover"
-          />
+        <!-- Bottom section: Smaller images -->
+        <div v-if="card.allImages.length >= 2" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'md:w-[110%] md:pr-4' : '']">
+          <template v-if="card.slug === 'HeartOfGlass'">
+            <img
+              :src="card.allImages.find(img => img.includes('closeup'))"
+              alt="closeup"
+              class="h-full w-auto object-contain bg-black"
+            />
+            <img
+              :src="card.allImages.find(img => img.includes('globe'))"
+              alt="globe"
+              class="h-full w-auto object-contain bg-black"
+            />
+          </template>
+          <template v-else>
+            <img
+              :src="card.slug === 'UpskirtQR' ? card.allImages[1] : card.allImages[0]"
+              :alt="`${card.title} image 1`"
+              class="h-full w-auto object-contain bg-black"
+            />
+            <img
+              :src="card.allImages[2] || card.allImages[1]"
+              :alt="`${card.title} image 2`"
+              class="h-full w-auto object-contain bg-black"
+            />
+          </template>
         </div>
       </div>
 
       <!-- RIGHT COLUMN: Large Hero Image -->
-      <div v-if="card.image" :class="['flex items-start', card.slug === 'HeartOfGlass' ? 'md:order-1' : 'md:order-2']">
+      <div v-if="card.image" :class="['flex items-start', card.slug === 'HeartOfGlass' ? 'md:order-1 justify-start' : 'md:order-2 justify-end']">
         <img
           :src="card.image"
           alt="cover image"
-          :style="{ width: '90%' }"
-          class="h-auto object-cover mx-auto"
+          :style="{ width: '75%' }"
+          class="h-auto object-cover"
         />
       </div>
         </div>
