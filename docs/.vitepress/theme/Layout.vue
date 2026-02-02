@@ -18,8 +18,8 @@ const normalizedPath = computed(() => {
 })
 
 const currentPageComponent = computed(() => {
-  if (frontmatter.value.layout === 'home') return WorkStack
-  if (normalizedPath.value.startsWith('/works/')) return WorkPage
+  if (frontmatter.value.layout === 'home') return WorkPage
+  if (normalizedPath.value.startsWith('/works/')) return WorkStack
   if (normalizedPath.value.startsWith('/about')) return AboutPage
   return null
 })
@@ -28,7 +28,6 @@ const currentPageComponent = computed(() => {
 <template>
   <!-- <HeroSection/> -->
   <div class="min-h-screen font-plexsans bg-stone-200 text-black">
-    <NavBar />
     
     <main class="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
       <component

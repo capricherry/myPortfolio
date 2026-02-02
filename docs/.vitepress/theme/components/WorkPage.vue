@@ -10,6 +10,7 @@ type Card = {
   route: string   // `/works/?id=slug`
   image: string | null
   component: any
+  allImages: string[]  // all images for this work
 }
 
 // 1) Markdown as Vue components
@@ -23,8 +24,14 @@ const markdownFiles = import.meta.glob('../../../works/**/index.md', {
   eager: true
 })
 
-// Images
+// Cover images for cards
 const imageFiles = import.meta.glob('../../../works/**/cover.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default'
+})
+
+// All images for detail pages
+const allImageFiles = import.meta.glob('../../../works/**/*.{jpg,jpeg,png,webp}', {
   eager: true,
   import: 'default'
 })
@@ -49,6 +56,11 @@ for (const path in markdownFiles) {
   const folder = path.replace(/\/index\.md$/, '/')
   const imageKey = Object.keys(imageFiles).find(k => k.startsWith(folder))
 
+  // Get all images for this work
+  const workImages = Object.keys(allImageFiles)
+    .filter(k => k.startsWith(folder))
+    .map(k => allImageFiles[k] as string)
+
   const mod = markdownModules[path] as any
 
   cards.value.push({
@@ -58,100 +70,61 @@ for (const path in markdownFiles) {
     excerpt: excerptLine || '',
     route,
     image: imageKey ? (imageFiles[imageKey] as string) : null,
-    component: mod?.default || null
+    component: mod?.default || null,
+    allImages: workImages
   })
 }
 
-const router = useRouter()
 
-// 👇 this is the *actual* selected work
-const currentSlug = ref<string | undefined>(cards.value[0]?.slug)
-
-// helper to read slug from current URL (?id=slug)
-function getSlugFromLocation(): string | undefined {
-  if (typeof window === 'undefined') {
-    return cards.value[0]?.slug
-  }
-
-  const params = new URLSearchParams(window.location.search)
-  const id = params.get('id')
-  return id || cards.value[0]?.slug
-}
-
-// initial selection when page loads (including from WorkStack)
-onMounted(() => {
-  currentSlug.value = getSlugFromLocation()
-})
-
-// when user clicks in the sidebar
-function selectCard(slug: string, routePath: string) {
-  currentSlug.value = slug
-
-  // keep the URL in sync (and let VitePress do SPA navigation)
-  router.go(withBase(routePath))
-}
-
-const currentCard = computed(() =>
-  cards.value.find(card => card.slug === currentSlug.value)
-)
 </script>
 
 <template>
-  <div class="flex flex-col lg:flex-row min-h-[80vh] border border-gray-400 rounded-2xl overflow-hidden shadow-lg">
-    <!-- Sidebar -->
-    <aside class="w-full lg:w-1/4 bg-gray-100 border-r border-gray-400 p-4 space-y-4 overflow-auto">
-      <h2 class="text-xl font-bold mb-2 text-gray-900">Proposals</h2>
-      <ul class="space-y-3">
-        <li
-          v-for="card in cards"
-          :key="card.slug"
-          class="rounded-lg transition hover:scale-[1.02]"
-          :class="{ 'ring-2 ring-gray-700': card.slug === currentSlug }"
-        >
-          <a
-            :href="withBase(card.route)"
-            @click.prevent="selectCard(card.slug, card.route)"
-            class="flex items-center gap-3 p-2 rounded-lg bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          >
-            <img
-              v-if="card.image"
-              :src="card.image"
-              alt="cover"
-              class="w-12 h-12 object-cover rounded border border-gray-400"
-            />
-            <div>
-              <div class="text-sm font-semibold text-gray-900 leading-snug">
-                {{ card.title }}
-              </div>
-              <div class="text-xs text-gray-600">{{ card.name }}</div>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </aside>
+  <div class="w-full bg-white">
+    <!-- Stack all works vertically -->
+    <div
+      v-for="card in cards"
+      :key="card.slug"
+      class="min-h-screen flex flex-col justify-center p-6 md:p-12 border-b border-gray-300 last:border-b-0"
+    >
+      <!-- Work Title and Author -->
+      <div class="mb-8">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
+          {{ card.title }}
+        </h2>
+        <h3 class="text-lg md:text-xl text-gray-600 font-medium">
+          {{ card.name }}
+        </h3>
+      </div>
 
-    <!-- Markdown Content -->
-    <section class="w-full bg-white lg:w-3/4 p-6 overflow-auto">
-      <div v-if="currentCard">
-        <div v-if="currentCard.image" class="mb-6">
-          <img
-            :src="currentCard.image"
-            alt="cover image"
-            class="w-full max-h-96 object-cover rounded border border-gray-400"
-          />
-        </div>
-
-        <!-- Render markdown component directly -->
-        <component
-          v-if="currentCard.component"
-          :is="currentCard.component"
-          class="prose prose-base md:prose-lg max-w-none"
+      <!-- Cover Image -->
+      <div v-if="card.image" class="mb-8">
+        <img
+          :src="card.image"
+          alt="cover image"
+          class="w-full max-h-[600px] object-cover rounded-lg border border-gray-300"
         />
       </div>
 
-      <div v-else class="text-gray-500">
-        Work not found.
+      <!-- Markdown Content -->
+      <component
+        v-if="card.component"
+        :is="card.component"
+        class="prose prose-base md:prose-lg max-w-none mb-12"
+      />
+
+      <!-- Gallery of all images -->
+      <div v-if="card.allImages.length > 0" class="mt-12">
+        <h3 class="text-2xl font-semibold mb-8 text-gray-900">Gallery</h3>
+        <div class="space-y-8 flex flex-col">
+          <img
+            v-for="(img, idx) in card.allImages"
+            :key="idx"
+            :src="img"
+            :alt="`${card.title} image ${idx + 1}`"
+            class="w-full object-cover rounded-lg border border-gray-300"
+          />
+        </div>
       </div>
-    </section>
+    </div>
   </div>
 </template>

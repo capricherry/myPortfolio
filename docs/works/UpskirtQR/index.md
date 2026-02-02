@@ -1,6 +1,6 @@
 # Upskirt QR
-## Luzie Grieger
+## 2024
 
 
 ## Abstract
-hello portfolio info
+it's about shifting blame from victims onto perpetrators
