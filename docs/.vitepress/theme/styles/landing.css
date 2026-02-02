@@ -7,6 +7,72 @@ html:has(.landing) {
   background-color: #000000;
 }
 
+/* per-work background colors by slug */
+.project-section[data-slug="DefensiveMode"] {
+  background-color: #816C5B !important;
+  background: #816C5B !important;
+}
+
+.project-section[data-slug="HeartOfGlass"] {
+  background-color: #161515 !important;
+}
+
+.project-section[data-slug="UpskirtQR"] {
+  background-color: #292929 !important;
+}
+
+/* DefensiveMode text color - darker blood red */
+.project-section[data-slug="DefensiveMode"] .work-content {
+  color: #6B1C1C !important;
+}
+
+.project-section[data-slug="DefensiveMode"] .work-content p {
+  color: #6B1C1C !important;
+}
+
+.project-section[data-slug="DefensiveMode"] h1,
+.project-section[data-slug="DefensiveMode"] h2,
+.project-section[data-slug="DefensiveMode"] h3,
+.project-section[data-slug="DefensiveMode"] h4,
+.project-section[data-slug="DefensiveMode"] h5,
+.project-section[data-slug="DefensiveMode"] h6 {
+  color: #6B1C1C !important;
+}
+
+/* HeartOfGlass text color */
+.project-section[data-slug="HeartOfGlass"] .work-content {
+  color: #b62f23;
+}
+
+.project-section[data-slug="HeartOfGlass"] .work-content p {
+  color: #b62f23;
+}
+
+.project-section[data-slug="HeartOfGlass"] .work-content h2 {
+  color: #b62f23 !important;
+}
+
+/* Force all headings red for HeartOfGlass */
+.project-section[data-slug="HeartOfGlass"] h1,
+.project-section[data-slug="HeartOfGlass"] h2,
+.project-section[data-slug="HeartOfGlass"] h3,
+.project-section[data-slug="HeartOfGlass"] h4,
+.project-section[data-slug="HeartOfGlass"] h5,
+.project-section[data-slug="HeartOfGlass"] h6 {
+  color: #b62f23 !important;
+}
+
+/* More specific prose targeting */
+.project-section[data-slug="HeartOfGlass"] .prose h2 {
+  color: #b62f23 !important;
+}
+
+/* Even more specific with work-content */
+.project-section[data-slug="HeartOfGlass"] .work-content h2 {
+  color: #b62f23 !important;
+  opacity: 0.7;
+}
+
 .landing {
   overflow-x: hidden;
 
@@ -14,52 +80,6 @@ html:has(.landing) {
     -webkit-font-smoothing: antialiased !important;
     -moz-osx-font-smoothing: grayscale !important;
     text-rendering: optimizeLegibility !important;
-  }
-  /* per-work background colors by slug */
-  .project-section[data-slug="DefensiveMode"] {
-    background-color: #816C5B !important;
-  }
-
-  .project-section[data-slug="HeartOfGlass"] {
-    background-color: #161515 !important;
-  }
-
-  .project-section[data-slug="UpskirtQR"] {
-    background-color: #292929;
-  }
-
-  /* HeartOfGlass text color */
-  .project-section[data-slug="HeartOfGlass"] .work-content {
-    color: #b62f23;
-  }
-
-  .project-section[data-slug="HeartOfGlass"] .work-content p {
-    color: #b62f23;
-  }
-
-  .project-section[data-slug="HeartOfGlass"] .work-content h2 {
-    color: #b62f23 !important;
-  }
-
-  /* Force all headings red for HeartOfGlass */
-  .project-section[data-slug="HeartOfGlass"] h1,
-  .project-section[data-slug="HeartOfGlass"] h2,
-  .project-section[data-slug="HeartOfGlass"] h3,
-  .project-section[data-slug="HeartOfGlass"] h4,
-  .project-section[data-slug="HeartOfGlass"] h5,
-  .project-section[data-slug="HeartOfGlass"] h6 {
-    color: #b62f23 !important;
-  }
-
-  /* More specific prose targeting */
-  .project-section[data-slug="HeartOfGlass"] .prose h2 {
-    color: #b62f23 !important;
-  }
-
-  /* Even more specific with work-content */
-  .project-section[data-slug="HeartOfGlass"] .work-content h2 {
-    color: #b62f23 !important;
-    opacity: 0.7;
   }
 
   /* /////////////////// */

@@ -106,7 +106,7 @@ for (const path in markdownFiles) {
         <!-- centered content container (reduced horizontal padding ~10%) -->
         <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
       <!-- LEFT COLUMN: Text Content -->
-      <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : {}">
+      <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
         <!-- Top section: Title and content -->
         <div class="flex flex-col justify-start">
           <!-- Work Title and Author -->
@@ -114,13 +114,13 @@ for (const path in markdownFiles) {
             <h2 class="text-5xl md:text-6xl font-bold mb-3">
               {{ card.title }}
             </h2>
-            <h3 :class="['text-lg md:text-xl font-medium', card.name === 'Anonymous' ? 'text-yellow-400 bg-yellow-900 px-2 py-1 rounded' : card.slug === 'HeartOfGlass' ? 'text-[#b62f23]' : 'text-gray-400']">
+            <h3 :class="['text-lg md:text-xl font-medium', card.name === 'Anonymous' ? 'text-yellow-400 bg-yellow-900 px-2 py-1 rounded' : card.slug === 'HeartOfGlass' ? 'text-[#b62f23]' : card.slug === 'DefensiveMode' ? 'text-[#6B1C1C]' : 'text-gray-400']">
               {{ card.name }}
             </h3>
           </div>
 
           <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
-          <div class="work-content mb-12" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : {}">
+          <div class="work-content mb-12" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
             <component
               v-if="card.component"
               :is="card.component"
@@ -130,7 +130,7 @@ for (const path in markdownFiles) {
         </div>
 
         <!-- Bottom section: Smaller images -->
-        <div v-if="card.allImages.length >= 2" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'w-3/4' : 'ml-0 mr-auto']">
+        <div v-if="card.allImages.length >= 1 || card.image" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'w-3/4' : 'ml-0 mr-auto']">
           <template v-if="card.slug === 'HeartOfGlass'">
             <img
               :src="card.allImages.find(img => img.includes('closeup'))"
@@ -140,6 +140,13 @@ for (const path in markdownFiles) {
             <img
               :src="card.allImages.find(img => img.includes('globe'))"
               alt="globe"
+              class="h-full w-auto object-contain bg-black"
+            />
+          </template>
+          <template v-else-if="card.slug === 'DefensiveMode'">
+            <img
+              :src="card.image"
+              :alt="`${card.title} cover`"
               class="h-full w-auto object-contain bg-black"
             />
           </template>
@@ -167,11 +174,11 @@ for (const path in markdownFiles) {
       </div>
 
       <!-- RIGHT COLUMN: Large Hero Image -->
-      <div v-if="card.image" :class="['flex items-start', card.slug === 'HeartOfGlass' ? 'md:order-1 justify-start' : 'md:order-2 justify-end']">
+      <div v-if="card.image || (card.slug === 'DefensiveMode' && card.allImages[0])" :class="['flex items-start', card.slug === 'HeartOfGlass' ? 'md:order-1 justify-start' : 'md:order-2 justify-end']">
         <img
-          :src="card.image"
+          :src="card.slug === 'DefensiveMode' ? card.allImages[0] : card.image"
           alt="cover image"
-          :style="{ width: '75%' }"
+          :style="{ width: card.slug === 'DefensiveMode' ? '50%' : '75%' }"
           class="h-auto object-cover"
         />
       </div>
