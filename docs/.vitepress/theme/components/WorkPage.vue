@@ -127,15 +127,15 @@ for (const path in markdownFiles) {
         </div>
 
         <!-- Two smaller images side by side under text -->
-        <div v-if="card.allImages.length >= 2" class="grid grid-cols-2 gap-4 mt-8">
+        <div v-if="card.allImages.length >= 2" class="grid grid-cols-2 gap-4 mt-8" style="height: 300px;">
           <img
-            :src="card.allImages[1]"
-            :alt="`${card.title} image 2`"
+            :src="card.slug === 'UpskirtQR' ? card.allImages[1] : card.allImages[0]"
+            :alt="`${card.title} image 1`"
             class="w-full object-cover"
           />
           <img
             :src="card.allImages[2] || card.allImages[1]"
-            :alt="`${card.title} image 3`"
+            :alt="`${card.title} image 2`"
             class="w-full object-cover"
           />
         </div>
