@@ -130,7 +130,7 @@ for (const path in markdownFiles) {
         </div>
 
         <!-- Bottom section: Smaller images -->
-        <div v-if="card.allImages.length >= 2" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'md:w-[110%] md:pr-4' : '']">
+        <div v-if="card.allImages.length >= 2" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'md:-ml-12' : '']">
           <template v-if="card.slug === 'HeartOfGlass'">
             <img
               :src="card.allImages.find(img => img.includes('closeup'))"
