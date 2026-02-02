@@ -114,7 +114,7 @@ for (const path in markdownFiles) {
             <h2 class="text-5xl md:text-6xl font-bold mb-3">
               {{ card.title }}
             </h2>
-            <h3 class="text-lg md:text-xl text-gray-400 font-medium">
+            <h3 :class="['text-lg md:text-xl font-medium', card.name === 'Anonymous' ? 'text-yellow-400 bg-yellow-900 px-2 py-1 rounded' : card.slug === 'HeartOfGlass' ? 'text-[#b62f23]' : 'text-gray-400']">
               {{ card.name }}
             </h3>
           </div>
