@@ -4,7 +4,7 @@
 
 html:has(.landing) {
   --vp-c-bg: #101010;
-  background-color: #f7f7f7;
+  background-color: #000000;
 }
 
 .landing {
@@ -30,11 +30,11 @@ html:has(.landing) {
 
   .VPNavBar,
   .VPNavBar:not(.top) {
-    background: transparent !important;
+    background: #161515 !important;
 
     @media (min-width: 768px) {
       backdrop-filter: blur(10px);
-      background: rgba(15, 15, 15, 0.8) !important;
+      background: #161515 !important;
       border-bottom: none !important;
     }
 
@@ -76,6 +76,11 @@ html:has(.landing) {
 
   .social-links::before {
     margin-left: 0 !important;
+  }
+
+  /* Force navbar dark background */
+  .VPNavBar {
+    background-color: #161515 !important;
   }
 
   /* ////////// */

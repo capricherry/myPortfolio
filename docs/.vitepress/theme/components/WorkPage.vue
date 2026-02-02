@@ -106,9 +106,9 @@ for (const path in markdownFiles) {
         <!-- centered content container (reduced horizontal padding ~10%) -->
         <div class="min-h-screen mx-auto w-full max-w-6xl px-2 md:px-4 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
       <!-- LEFT COLUMN: Text Content -->
-      <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']">
+      <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : {}">
         <!-- Top section: Title and content -->
-        <div class="flex flex-col justify-start">
+        <div :class="['flex flex-col justify-start', card.slug === 'HeartOfGlass' ? 'md:-ml-12' : '']">
           <!-- Work Title and Author -->
           <div class="mb-8">
             <h2 class="text-5xl md:text-6xl font-bold mb-3">
