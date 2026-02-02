@@ -79,51 +79,54 @@ for (const path in markdownFiles) {
 </script>
 
 <template>
-  <div class="w-full bg-white">
+  <div class="bg-black text-white">
     <!-- Stack all works vertically -->
     <div
       v-for="card in cards"
       :key="card.slug"
-      class="min-h-screen flex flex-col justify-center p-6 md:p-12 border-b border-gray-300 last:border-b-0"
+      class="min-h-screen px-8 md:px-16 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"
     >
-      <!-- Work Title and Author -->
-      <div class="mb-8">
-        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-2">
-          {{ card.title }}
-        </h2>
-        <h3 class="text-lg md:text-xl text-gray-600 font-medium">
-          {{ card.name }}
-        </h3>
+      <!-- LEFT COLUMN: Text Content -->
+      <div class="flex flex-col justify-start">
+        <!-- Work Title and Author -->
+        <div class="mb-8">
+          <h2 class="text-5xl md:text-6xl font-bold mb-3">
+            {{ card.title }}
+          </h2>
+          <h3 class="text-lg md:text-xl text-gray-400 font-medium">
+            {{ card.name }}
+          </h3>
+        </div>
+
+        <!-- Markdown Content -->
+        <component
+          v-if="card.component"
+          :is="card.component"
+          class="prose prose-invert prose-base md:prose-lg max-w-none mb-12 prose-headings:text-white prose-p:text-gray-300"
+        />
+
+        <!-- Two smaller images side by side under text -->
+        <div v-if="card.allImages.length >= 2" class="grid grid-cols-2 gap-4 mt-8">
+          <img
+            :src="card.allImages[1]"
+            :alt="`${card.title} image 2`"
+            class="w-full object-cover"
+          />
+          <img
+            :src="card.allImages[2] || card.allImages[1]"
+            :alt="`${card.title} image 3`"
+            class="w-full object-cover"
+          />
+        </div>
       </div>
 
-      <!-- Cover Image -->
-      <div v-if="card.image" class="mb-8">
+      <!-- RIGHT COLUMN: Large Hero Image -->
+      <div v-if="card.image" class="flex items-start">
         <img
           :src="card.image"
           alt="cover image"
-          class="w-full max-h-[600px] object-cover rounded-lg border border-gray-300"
+          class="w-full h-auto object-cover"
         />
-      </div>
-
-      <!-- Markdown Content -->
-      <component
-        v-if="card.component"
-        :is="card.component"
-        class="prose prose-base md:prose-lg max-w-none mb-12"
-      />
-
-      <!-- Gallery of all images -->
-      <div v-if="card.allImages.length > 0" class="mt-12">
-        <h3 class="text-2xl font-semibold mb-8 text-gray-900">Gallery</h3>
-        <div class="space-y-8 flex flex-col">
-          <img
-            v-for="(img, idx) in card.allImages"
-            :key="idx"
-            :src="img"
-            :alt="`${card.title} image ${idx + 1}`"
-            class="w-full object-cover rounded-lg border border-gray-300"
-          />
-        </div>
       </div>
     </div>
   </div>
