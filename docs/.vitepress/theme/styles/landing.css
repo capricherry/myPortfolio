@@ -24,6 +24,39 @@ html:has(.landing) {
     background-color: #292929;
   }
 
+  /* HeartOfGlass text color */
+  .project-section[data-slug="HeartOfGlass"] .work-content {
+    color: #b62f23;
+  }
+
+  .project-section[data-slug="HeartOfGlass"] .work-content p {
+    color: #b62f23;
+  }
+
+  .project-section[data-slug="HeartOfGlass"] .work-content h2 {
+    color: #b62f23 !important;
+  }
+
+  /* Force all headings red for HeartOfGlass */
+  .project-section[data-slug="HeartOfGlass"] h1,
+  .project-section[data-slug="HeartOfGlass"] h2,
+  .project-section[data-slug="HeartOfGlass"] h3,
+  .project-section[data-slug="HeartOfGlass"] h4,
+  .project-section[data-slug="HeartOfGlass"] h5,
+  .project-section[data-slug="HeartOfGlass"] h6 {
+    color: #b62f23 !important;
+  }
+
+  /* More specific prose targeting */
+  .project-section[data-slug="HeartOfGlass"] .prose h2 {
+    color: #b62f23 !important;
+  }
+
+  /* Even more specific with work-content */
+  .project-section[data-slug="HeartOfGlass"] .work-content h2 {
+    color: #b62f23 !important;
+  }
+
   /* /////////////////// */
   /* VitePress Overrides */
   /* /////////////////// */

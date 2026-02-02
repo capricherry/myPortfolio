@@ -120,11 +120,11 @@ for (const path in markdownFiles) {
           </div>
 
           <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
-          <div class="work-content mb-12">
+          <div class="work-content mb-12" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : {}">
             <component
               v-if="card.component"
               :is="card.component"
-              class="prose prose-invert prose-base md:prose-lg max-w-none prose-headings:text-white prose-p:text-gray-300"
+              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-300', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
             />
           </div>
         </div>
@@ -153,6 +153,7 @@ for (const path in markdownFiles) {
               :src="card.allImages[2] || card.allImages[1]"
               :alt="`${card.title} image 2`"
               class="h-full w-auto object-contain bg-black"
+              :style="card.slug === 'UpskirtQR' ? { transform: 'scaleY(-1)' } : {}"
             />
           </template>
         </div>
