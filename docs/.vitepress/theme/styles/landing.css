@@ -16,8 +16,12 @@ html:has(.landing) {
     text-rendering: optimizeLegibility !important;
   }
   /* per-work background colors by slug */
+  .project-section[data-slug="DefensiveMode"] {
+    background-color: #816C5B !important;
+  }
+
   .project-section[data-slug="HeartOfGlass"] {
-    background-color: #161515;
+    background-color: #161515 !important;
   }
 
   .project-section[data-slug="UpskirtQR"] {

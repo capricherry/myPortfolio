@@ -104,11 +104,11 @@ for (const path in markdownFiles) {
         :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)' }"
       >
         <!-- centered content container (reduced horizontal padding ~10%) -->
-        <div class="min-h-screen mx-auto w-full max-w-6xl px-2 md:px-4 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
+        <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
       <!-- LEFT COLUMN: Text Content -->
       <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : {}">
         <!-- Top section: Title and content -->
-        <div :class="['flex flex-col justify-start', card.slug === 'HeartOfGlass' ? 'md:-ml-12' : '']">
+        <div class="flex flex-col justify-start">
           <!-- Work Title and Author -->
           <div class="mb-8">
             <h2 class="text-5xl md:text-6xl font-bold mb-3">
@@ -130,7 +130,7 @@ for (const path in markdownFiles) {
         </div>
 
         <!-- Bottom section: Smaller images -->
-        <div v-if="card.allImages.length >= 2" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'md:-ml-12' : '']">
+        <div v-if="card.allImages.length >= 2" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'w-3/4' : 'ml-0 mr-auto']">
           <template v-if="card.slug === 'HeartOfGlass'">
             <img
               :src="card.allImages.find(img => img.includes('closeup'))"
@@ -143,17 +143,24 @@ for (const path in markdownFiles) {
               class="h-full w-auto object-contain bg-black"
             />
           </template>
-          <template v-else>
+          <template v-else-if="card.slug === 'UpskirtQR'">
             <img
-              :src="card.slug === 'UpskirtQR' ? card.allImages[1] : card.allImages[0]"
+              :src="card.allImages[1]"
               :alt="`${card.title} image 1`"
               class="h-full w-auto object-contain bg-black"
             />
             <img
-              :src="card.allImages[2] || card.allImages[1]"
+              :src="card.allImages[2]"
               :alt="`${card.title} image 2`"
               class="h-full w-auto object-contain bg-black"
-              :style="card.slug === 'UpskirtQR' ? { transform: 'scaleY(-1)' } : {}"
+              :style="{ transform: 'scaleY(-1)' }"
+            />
+          </template>
+          <template v-else>
+            <img
+              :src="card.allImages[0]"
+              :alt="`${card.title} image 1`"
+              class="h-full w-auto object-contain bg-black"
             />
           </template>
         </div>
