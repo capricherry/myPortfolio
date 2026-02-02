@@ -15,6 +15,14 @@ html:has(.landing) {
     -moz-osx-font-smoothing: grayscale !important;
     text-rendering: optimizeLegibility !important;
   }
+  /* per-work background colors by slug */
+  .project-section[data-slug="HeartOfGlass"] {
+    background-color: #161515;
+  }
+
+  .project-section[data-slug="UpskirtQR"] {
+    background-color: #292929;
+  }
 
   /* /////////////////// */
   /* VitePress Overrides */
@@ -221,4 +229,26 @@ html:has(.landing) {
       border-radius: 100px;
     }
   }
+}
+
+/* Ensure per-work backgrounds apply even if .landing wrapper isn't present */
+.project-section[data-slug="HeartOfGlass"] {
+  background-color: #161515;
+}
+
+.project-section[data-slug="UpskirtQR"] {
+  background-color: #292929;
+}
+
+/* Hide the first H1 or H2 found anywhere inside the markdown output
+   so the programmatic title on the left isn't duplicated. */
+.project-section .work-content h1:first-of-type,
+.project-section .work-content h2:first-of-type {
+  display: none;
+}
+
+/* Top-level fallback if .project-section wrapper isn't present */
+.work-content h1:first-of-type,
+.work-content h2:first-of-type {
+  display: none;
 }

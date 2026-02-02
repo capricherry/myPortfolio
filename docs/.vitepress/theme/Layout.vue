@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { useData, useRoute } from 'vitepress'
-import NavBar from './components/NavBar.vue'
 import WorkPage from './components/WorkPage.vue'
-import WorkStack from './components/WorkStack.vue'
 import AboutPage from './components/AboutPage.vue'
-import HeroSection from './home-page-components/hero-section/HeroSection.vue'
 import { computed } from 'vue'
 
 const { frontmatter, site } = useData()
@@ -19,7 +16,6 @@ const normalizedPath = computed(() => {
 
 const currentPageComponent = computed(() => {
   if (frontmatter.value.layout === 'home') return WorkPage
-  if (normalizedPath.value.startsWith('/works/')) return WorkStack
   if (normalizedPath.value.startsWith('/about')) return AboutPage
   return null
 })

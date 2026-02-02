@@ -11,6 +11,7 @@ type Card = {
   image: string | null
   component: any
   allImages: string[]  // all images for this work
+  bg?: string
 }
 
 // 1) Markdown as Vue components
@@ -38,6 +39,8 @@ const allImageFiles = import.meta.glob('../../../works/**/*.{jpg,jpeg,png,webp}'
 
 const cards = ref<Card[]>([])
 
+// (palette removed) per-work backgrounds are defined in CSS by slug
+
 for (const path in markdownFiles) {
   const raw = markdownFiles[path] as string
   const lines = raw.split('\n')
@@ -45,6 +48,17 @@ for (const path in markdownFiles) {
   const titleLine = lines.find(line => line.startsWith('# '))
   const nameLine = lines.find(line => line.startsWith('## '))
   const excerptLine = lines.find(line => line.trim() && !line.startsWith('#'))
+
+  // parse optional YAML frontmatter (e.g. ---\nbg: "#0b1220"\n---)
+  let bg: string | undefined = undefined
+  const fmMatch = raw.match(/^---\s*([\s\S]*?)\s*---/)
+  if (fmMatch) {
+    const fm = fmMatch[1]
+    const bgLine = fm.split('\n').find(l => l.trim().startsWith('bg:'))
+    if (bgLine) {
+      bg = bgLine.replace(/^bg:\s*/, '').trim().replace(/^['\"]|['\"]$/g, '')
+    }
+  }
 
   // e.g. docs/works/my-work/index.md -> slug = "my-work"
   const match = path.match(/works\/([^/]+)\/index\.md$/)
@@ -71,7 +85,8 @@ for (const path in markdownFiles) {
     route,
     image: imageKey ? (imageFiles[imageKey] as string) : null,
     component: mod?.default || null,
-    allImages: workImages
+    allImages: workImages,
+    bg
   })
 }
 
@@ -81,11 +96,15 @@ for (const path in markdownFiles) {
 <template>
   <div class="bg-black text-white">
     <!-- Stack all works vertically -->
-    <div
-      v-for="card in cards"
-      :key="card.slug"
-      class="min-h-screen px-8 md:px-16 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start"
-    >
+    <div v-for="(card, i) in cards" :key="card.slug">
+      <!-- full-bleed background wrapper (color set via CSS by data-slug) -->
+      <div
+        class="project-section py-0"
+        :data-slug="card.slug"
+        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)' }"
+      >
+        <!-- centered content container -->
+        <div class="min-h-screen mx-auto w-full max-w-6xl px-8 md:px-16 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start text-white">
       <!-- LEFT COLUMN: Text Content -->
       <div class="flex flex-col justify-start">
         <!-- Work Title and Author -->
@@ -98,12 +117,14 @@ for (const path in markdownFiles) {
           </h3>
         </div>
 
-        <!-- Markdown Content -->
-        <component
-          v-if="card.component"
-          :is="card.component"
-          class="prose prose-invert prose-base md:prose-lg max-w-none mb-12 prose-headings:text-white prose-p:text-gray-300"
-        />
+        <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
+        <div class="work-content mb-12">
+          <component
+            v-if="card.component"
+            :is="card.component"
+            class="prose prose-invert prose-base md:prose-lg max-w-none prose-headings:text-white prose-p:text-gray-300"
+          />
+        </div>
 
         <!-- Two smaller images side by side under text -->
         <div v-if="card.allImages.length >= 2" class="grid grid-cols-2 gap-4 mt-8">
@@ -127,6 +148,8 @@ for (const path in markdownFiles) {
           alt="cover image"
           class="w-full h-auto object-cover"
         />
+      </div>
+        </div>
       </div>
     </div>
   </div>

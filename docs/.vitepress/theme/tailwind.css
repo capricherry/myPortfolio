@@ -1,8 +1,6 @@
 /* This must be FIRST and only once */
 @import "tailwindcss";
 
-@plugin "@tailwindcss/typography";
-
 /* Your custom CSS after Tailwind */
 :root {
   --vp-c-brand: #ef7234;
