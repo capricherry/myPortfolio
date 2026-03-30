@@ -2,15 +2,36 @@
 /* Landing Page CSS Styles */
 /* /////////////////////// */
 
+body {
+  scroll-snap-type: y mandatory !important;
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-snap-type: y mandatory !important;
+  scroll-behavior: smooth;
+}
+
+/* Enable scroll snapping on the main container */
 html:has(.landing) {
   --vp-c-bg: #101010;
   background-color: #000000;
+  scroll-snap-type: y mandatory !important;
+  scroll-behavior: smooth;
+  scroll-padding-top: 25vh;
 }
 
 /* All sections will have dynamic background colors via JavaScript */
 .project-section {
   background-color: #000000;
   will-change: background-color;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+/* Unified background layer with smooth color transition and snap effect */
+#background-transition {
+  transition: background-color 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Content fade during transitions - smooth opacity transition with premium easing */

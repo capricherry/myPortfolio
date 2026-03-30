@@ -7,11 +7,10 @@ type Card = {
   title: string
   name: string
   excerpt: string
-  route: string   // `/works/?id=slug`
+  route: string
   image: string | null
   component: any
-  allImages: string[]  // all images for this work
-  bg?: string
+  allImages: string[]
 }
 
 // Color map for each section
@@ -44,7 +43,6 @@ const interpolateColor = (color1: string, color2: string, factor: number) => {
 }
 
 // Handle scroll color transitions
-let animationFrameId: number | null = null
 const handleScrollColorTransition = () => {
   const backgroundLayer = document.getElementById('background-transition') as HTMLElement
   const projectSections = Array.from(document.querySelectorAll('.project-section')) as HTMLElement[]
@@ -52,10 +50,10 @@ const handleScrollColorTransition = () => {
   
   if (!backgroundLayer || projectSections.length === 0) return
   
-  const transitionRange = windowHeight * 6 // Transition happens over 6 viewports for Apple-like luxury feel
+  const transitionRange = windowHeight * 12
   let currentBgColor = colorMap[projectSections[0]?.dataset.slug || ''] || '#816C5B'
   
-  // Find which section(s) we should be showing
+  // Find active section and blend colors during transitions
   for (let index = 0; index < projectSections.length; index++) {
     const section = projectSections[index]
     const rect = section.getBoundingClientRect()
@@ -63,36 +61,31 @@ const handleScrollColorTransition = () => {
     const elementBottom = rect.bottom
     const slug = section.dataset.slug || ''
     
-    // This section is transitioning out (scrolling upward past viewport)
-    if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
-      // We're in the middle of a transition - blend to next color
+    // Get the actual content bounds (ignoring padding)
+    const content = section.querySelector('.project-content') as HTMLElement
+    const contentRect = content?.getBoundingClientRect()
+    const contentTop = contentRect?.top || 0
+    const contentBottom = contentRect?.bottom || 0
+    
+    // Prioritize snap: if content is in comfortable viewing range, snap to it
+    if (contentTop >= -100 && contentTop <= windowHeight * 0.6) {
+      currentBgColor = colorMap[slug] || '#000000'
+      break
+    }
+    // During transition between sections, blend colors smoothly
+    else if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
       const nextSlug = projectSections[index + 1].dataset.slug || ''
       const color1 = colorMap[slug] || '#000000'
       const color2 = colorMap[nextSlug] || '#000000'
-      
-      const distancePastTop = Math.abs(elementTop)
-      const progress = Math.min(1, distancePastTop / transitionRange)
-      
+      const progress = Math.min(1, Math.abs(elementTop) / transitionRange)
       currentBgColor = interpolateColor(color1, color2, progress)
-      break
-    }
-    // This section is visible (above top of viewport but not past)
-    else if (elementTop <= 0 && elementBottom > 0) {
-      // Section is on screen - show this section's color
-      currentBgColor = colorMap[slug] || '#000000'
-      break
-    }
-    // This section is entering from below
-    else if (elementTop > 0 && elementTop < windowHeight) {
-      currentBgColor = colorMap[slug] || '#000000'
       break
     }
   }
   
-  // Apply the unified background color
   backgroundLayer.style.backgroundColor = currentBgColor
   
-  // Now handle content visibility for each section
+  // Handle content visibility
   projectSections.forEach((section, index) => {
     const rect = section.getBoundingClientRect()
     const elementTop = rect.top
@@ -102,57 +95,41 @@ const handleScrollColorTransition = () => {
     if (!content) return
     
     let contentOpacity = 0
+    const progress = Math.min(1, Math.abs(elementTop) / transitionRange)
     
-    // Check if the PREVIOUS section is transitioning to this one
-    let isBeingTransitionedInto = false
+    // Check if previous section is transitioning to this one
     if (index > 0) {
       const prevSection = projectSections[index - 1]
       const prevRect = prevSection.getBoundingClientRect()
       const prevElementTop = prevRect.top
       const prevElementBottom = prevRect.bottom
       
-      // Previous section is transitioning (scrolling up)
       if (prevElementTop < 0 && prevElementBottom > 0) {
-        isBeingTransitionedInto = true
-        
-        const distancePastTop = Math.abs(prevElementTop)
-        const progress = Math.min(1, distancePastTop / transitionRange)
-        
-        // Fade in over 0.65 to 1.0 range (35% of transition) - longer, smoother fade
-        if (progress >= 0.65) {
-          const fadeInProgress = (progress - 0.65) / 0.35
-          contentOpacity = fadeInProgress
-        } else {
-          contentOpacity = 0
+        contentOpacity = progress >= 0.65 ? (progress - 0.65) / 0.35 : 0
+      }
+      else {
+        // Normal visibility logic
+        if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
+          contentOpacity = Math.max(0, 1 - (progress / 0.65))
+        }
+        else if (elementTop <= 0 && elementBottom > 0) {
+          contentOpacity = 1
+        }
+        else if (elementTop > 0 && elementTop < windowHeight) {
+          contentOpacity = 1
         }
       }
     }
-    
-    // Only apply normal visibility if not being transitioned into
-    if (!isBeingTransitionedInto) {
-      // Section is transitioning out (scrolling upward)
+    else {
+      // First section - normal visibility
       if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
-        const distancePastTop = Math.abs(elementTop)
-        const progress = Math.min(1, distancePastTop / transitionRange)
-        
-        // Fade out current section content as we scroll (0 to 0.65) - longer fade for smoothness
-        if (progress < 0.65) {
-          contentOpacity = Math.max(0, 1 - (progress / 0.65))
-        } else {
-          contentOpacity = 0
-        }
+        contentOpacity = Math.max(0, 1 - (progress / 0.65))
       }
-      // Section is fully visible on screen
       else if (elementTop <= 0 && elementBottom > 0) {
         contentOpacity = 1
       }
-      // Section is entering from below
       else if (elementTop > 0 && elementTop < windowHeight) {
         contentOpacity = 1
-      }
-      // Section is out of view
-      else {
-        contentOpacity = 0
       }
     }
     
@@ -161,18 +138,7 @@ const handleScrollColorTransition = () => {
   })
 }
 
-// Throttle scroll handler with requestAnimationFrame
-const throttledScroll = () => {
-  if (animationFrameId !== null) {
-    cancelAnimationFrame(animationFrameId)
-  }
-  animationFrameId = requestAnimationFrame(() => {
-    handleScrollColorTransition()
-    animationFrameId = null
-  })
-}
-
-// 1) Markdown as Vue components
+// Markdown as Vue components
 const markdownModules = import.meta.glob('../../../works/**/index.md', {
   eager: true
 })
@@ -197,8 +163,6 @@ const allImageFiles = import.meta.glob('../../../works/**/*.{jpg,jpeg,png,webp}'
 
 const cards = ref<Card[]>([])
 
-// (palette removed) per-work backgrounds are defined in CSS by slug
-
 for (const path in markdownFiles) {
   const raw = markdownFiles[path] as string
   const lines = raw.split('\n')
@@ -207,28 +171,13 @@ for (const path in markdownFiles) {
   const nameLine = lines.find(line => line.startsWith('## '))
   const excerptLine = lines.find(line => line.trim() && !line.startsWith('#'))
 
-  // parse optional YAML frontmatter (e.g. ---\nbg: "#0b1220"\n---)
-  let bg: string | undefined = undefined
-  const fmMatch = raw.match(/^---\s*([\s\S]*?)\s*---/)
-  if (fmMatch) {
-    const fm = fmMatch[1]
-    const bgLine = fm.split('\n').find(l => l.trim().startsWith('bg:'))
-    if (bgLine) {
-      bg = bgLine.replace(/^bg:\s*/, '').trim().replace(/^['\"]|['\"]$/g, '')
-    }
-  }
-
-  // e.g. docs/works/my-work/index.md -> slug = "my-work"
   const match = path.match(/works\/([^/]+)\/index\.md$/)
   const slug = match?.[1] ?? ''
-
-  // We stay on /works and switch via ?id=slug
   const route = `/works/?id=${slug}`
 
   const folder = path.replace(/\/index\.md$/, '/')
   const imageKey = Object.keys(imageFiles).find(k => k.startsWith(folder))
 
-  // Get all images for this work
   const workImages = Object.keys(allImageFiles)
     .filter(k => k.startsWith(folder))
     .map(k => allImageFiles[k] as string)
@@ -243,22 +192,17 @@ for (const path in markdownFiles) {
     route,
     image: imageKey ? (imageFiles[imageKey] as string) : null,
     component: mod?.default || null,
-    allImages: workImages,
-    bg
+    allImages: workImages
   })
 }
 
 // Add scroll listener on mount
 onMounted(() => {
-  window.addEventListener('scroll', throttledScroll, { passive: true })
-  // Initial call to set colors on first load
+  window.addEventListener('scroll', handleScrollColorTransition, { passive: true })
   handleScrollColorTransition()
   
   return () => {
-    window.removeEventListener('scroll', throttledScroll)
-    if (animationFrameId !== null) {
-      cancelAnimationFrame(animationFrameId)
-    }
+    window.removeEventListener('scroll', handleScrollColorTransition)
   }
 })
 
