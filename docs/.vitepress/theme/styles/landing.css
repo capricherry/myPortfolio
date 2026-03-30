@@ -13,10 +13,10 @@ html:has(.landing) {
   will-change: background-color;
 }
 
-/* Content fade during transitions */
+/* Content fade during transitions - smooth opacity transition with premium easing */
 .project-content {
-  transition: opacity 0.05s linear;
   will-change: opacity;
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* DefensiveMode text color - darker blood red */

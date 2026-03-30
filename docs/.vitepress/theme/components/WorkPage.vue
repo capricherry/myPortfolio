@@ -44,61 +44,131 @@ const interpolateColor = (color1: string, color2: string, factor: number) => {
 }
 
 // Handle scroll color transitions
+let animationFrameId: number | null = null
 const handleScrollColorTransition = () => {
+  const backgroundLayer = document.getElementById('background-transition') as HTMLElement
   const projectSections = Array.from(document.querySelectorAll('.project-section')) as HTMLElement[]
   const windowHeight = window.innerHeight
   
+  if (!backgroundLayer || projectSections.length === 0) return
+  
+  const transitionRange = windowHeight * 6 // Transition happens over 6 viewports for Apple-like luxury feel
+  let currentBgColor = colorMap[projectSections[0]?.dataset.slug || ''] || '#816C5B'
+  
+  // Find which section(s) we should be showing
+  for (let index = 0; index < projectSections.length; index++) {
+    const section = projectSections[index]
+    const rect = section.getBoundingClientRect()
+    const elementTop = rect.top
+    const elementBottom = rect.bottom
+    const slug = section.dataset.slug || ''
+    
+    // This section is transitioning out (scrolling upward past viewport)
+    if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
+      // We're in the middle of a transition - blend to next color
+      const nextSlug = projectSections[index + 1].dataset.slug || ''
+      const color1 = colorMap[slug] || '#000000'
+      const color2 = colorMap[nextSlug] || '#000000'
+      
+      const distancePastTop = Math.abs(elementTop)
+      const progress = Math.min(1, distancePastTop / transitionRange)
+      
+      currentBgColor = interpolateColor(color1, color2, progress)
+      break
+    }
+    // This section is visible (above top of viewport but not past)
+    else if (elementTop <= 0 && elementBottom > 0) {
+      // Section is on screen - show this section's color
+      currentBgColor = colorMap[slug] || '#000000'
+      break
+    }
+    // This section is entering from below
+    else if (elementTop > 0 && elementTop < windowHeight) {
+      currentBgColor = colorMap[slug] || '#000000'
+      break
+    }
+  }
+  
+  // Apply the unified background color
+  backgroundLayer.style.backgroundColor = currentBgColor
+  
+  // Now handle content visibility for each section
   projectSections.forEach((section, index) => {
     const rect = section.getBoundingClientRect()
     const elementTop = rect.top
-    const elementHeight = rect.height
+    const elementBottom = rect.bottom
+    const content = section.querySelector('.project-content') as HTMLElement
     
-    const slug = section.dataset.slug || ''
-    const currentColor = colorMap[slug] || '#000000'
+    if (!content) return
     
-    let bgColor = currentColor
-    let contentOpacity = 1
+    let contentOpacity = 0
     
-    // Check if section is currently in viewport
-    const isInViewport = elementTop < windowHeight && elementTop + elementHeight > 0
-    
-    if (isInViewport && elementTop > 0) {
-      // Section is fully visible in viewport
-      bgColor = currentColor
-      contentOpacity = 1
-    } else if (elementTop <= 0 && index < projectSections.length - 1) {
-      // Section is scrolling up - transition to next color
-      const nextSection = projectSections[index + 1]
-      const nextSlug = nextSection.dataset.slug || ''
-      const nextColor = colorMap[nextSlug] || '#000000'
+    // Check if the PREVIOUS section is transitioning to this one
+    let isBeingTransitionedInto = false
+    if (index > 0) {
+      const prevSection = projectSections[index - 1]
+      const prevRect = prevSection.getBoundingClientRect()
+      const prevElementTop = prevRect.top
+      const prevElementBottom = prevRect.bottom
       
-      // How far has the section scrolled past the top of viewport?
-      const distancePastTop = Math.abs(elementTop)
-      const transitionRange = windowHeight * 0.6 // Transition happens over 60% of viewport
-      
-      // Progress: 0 = just started scrolling, 1 = fully transitioned
-      const progress = Math.min(1, distancePastTop / transitionRange)
-      
-      bgColor = interpolateColor(currentColor, nextColor, progress)
-      contentOpacity = 1 - progress
-      
-      // Fade in next section's content as this one fades out
-      const nextContent = nextSection.querySelector('.project-content') as HTMLElement
-      if (nextContent) {
-        nextContent.style.opacity = progress.toString()
-        nextContent.style.pointerEvents = progress > 0.1 ? 'auto' : 'none'
+      // Previous section is transitioning (scrolling up)
+      if (prevElementTop < 0 && prevElementBottom > 0) {
+        isBeingTransitionedInto = true
+        
+        const distancePastTop = Math.abs(prevElementTop)
+        const progress = Math.min(1, distancePastTop / transitionRange)
+        
+        // Fade in over 0.65 to 1.0 range (35% of transition) - longer, smoother fade
+        if (progress >= 0.65) {
+          const fadeInProgress = (progress - 0.65) / 0.35
+          contentOpacity = fadeInProgress
+        } else {
+          contentOpacity = 0
+        }
       }
     }
     
-    // Apply background color
-    section.style.backgroundColor = bgColor
-    
-    // Apply content opacity for current section
-    const content = section.querySelector('.project-content') as HTMLElement
-    if (content) {
-      content.style.opacity = contentOpacity.toString()
-      content.style.pointerEvents = contentOpacity > 0.1 ? 'auto' : 'none'
+    // Only apply normal visibility if not being transitioned into
+    if (!isBeingTransitionedInto) {
+      // Section is transitioning out (scrolling upward)
+      if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
+        const distancePastTop = Math.abs(elementTop)
+        const progress = Math.min(1, distancePastTop / transitionRange)
+        
+        // Fade out current section content as we scroll (0 to 0.65) - longer fade for smoothness
+        if (progress < 0.65) {
+          contentOpacity = Math.max(0, 1 - (progress / 0.65))
+        } else {
+          contentOpacity = 0
+        }
+      }
+      // Section is fully visible on screen
+      else if (elementTop <= 0 && elementBottom > 0) {
+        contentOpacity = 1
+      }
+      // Section is entering from below
+      else if (elementTop > 0 && elementTop < windowHeight) {
+        contentOpacity = 1
+      }
+      // Section is out of view
+      else {
+        contentOpacity = 0
+      }
     }
+    
+    content.style.opacity = Math.max(0, contentOpacity).toString()
+    content.style.pointerEvents = contentOpacity > 0.5 ? 'auto' : 'none'
+  })
+}
+
+// Throttle scroll handler with requestAnimationFrame
+const throttledScroll = () => {
+  if (animationFrameId !== null) {
+    cancelAnimationFrame(animationFrameId)
+  }
+  animationFrameId = requestAnimationFrame(() => {
+    handleScrollColorTransition()
+    animationFrameId = null
   })
 }
 
@@ -180,12 +250,15 @@ for (const path in markdownFiles) {
 
 // Add scroll listener on mount
 onMounted(() => {
-  window.addEventListener('scroll', handleScrollColorTransition, { passive: true })
+  window.addEventListener('scroll', throttledScroll, { passive: true })
   // Initial call to set colors on first load
   handleScrollColorTransition()
   
   return () => {
-    window.removeEventListener('scroll', handleScrollColorTransition)
+    window.removeEventListener('scroll', throttledScroll)
+    if (animationFrameId !== null) {
+      cancelAnimationFrame(animationFrameId)
+    }
   }
 })
 
@@ -193,14 +266,21 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="bg-black text-white">
+  <div class="bg-black text-white relative" style="position: relative; z-index: 0;">
+    <!-- Single unified background layer that transitions color -->
+    <div 
+      id="background-transition"
+      class="fixed top-0 left-0 w-full h-screen pointer-events-none"
+      style="will-change: background-color; z-index: -1; background-color: #816C5B;"
+    />
+    
     <!-- Stack all works vertically -->
     <div v-for="(card, i) in cards" :key="card.slug">
-      <!-- full-bleed background wrapper (color set via CSS by data-slug) -->
+      <!-- full-bleed background wrapper (transparent - background handled by background layer) -->
       <div
         class="project-section py-0"
         :data-slug="card.slug"
-        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)' }"
+        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent' }"
       >
         <!-- centered content container (reduced horizontal padding ~10%) -->
         <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
