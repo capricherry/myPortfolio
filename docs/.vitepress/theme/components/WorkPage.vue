@@ -14,6 +14,94 @@ type Card = {
   bg?: string
 }
 
+// Color map for each section
+const colorMap: Record<string, string> = {
+  DefensiveMode: '#816C5B',
+  HeartOfGlass: '#161515',
+  UpskirtQR: '#292929'
+}
+
+// Helper to convert hex to RGB
+const hexToRgb = (hex: string) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : { r: 0, g: 0, b: 0 }
+}
+
+// Helper to interpolate between two colors
+const interpolateColor = (color1: string, color2: string, factor: number) => {
+  const rgb1 = hexToRgb(color1)
+  const rgb2 = hexToRgb(color2)
+  
+  const r = Math.round(rgb1.r + (rgb2.r - rgb1.r) * factor)
+  const g = Math.round(rgb1.g + (rgb2.g - rgb1.g) * factor)
+  const b = Math.round(rgb1.b + (rgb2.b - rgb1.b) * factor)
+  
+  return `rgb(${r}, ${g}, ${b})`
+}
+
+// Handle scroll color transitions
+const handleScrollColorTransition = () => {
+  const projectSections = Array.from(document.querySelectorAll('.project-section')) as HTMLElement[]
+  const windowHeight = window.innerHeight
+  
+  projectSections.forEach((section, index) => {
+    const rect = section.getBoundingClientRect()
+    const elementTop = rect.top
+    const elementHeight = rect.height
+    
+    const slug = section.dataset.slug || ''
+    const currentColor = colorMap[slug] || '#000000'
+    
+    let bgColor = currentColor
+    let contentOpacity = 1
+    
+    // Check if section is currently in viewport
+    const isInViewport = elementTop < windowHeight && elementTop + elementHeight > 0
+    
+    if (isInViewport && elementTop > 0) {
+      // Section is fully visible in viewport
+      bgColor = currentColor
+      contentOpacity = 1
+    } else if (elementTop <= 0 && index < projectSections.length - 1) {
+      // Section is scrolling up - transition to next color
+      const nextSection = projectSections[index + 1]
+      const nextSlug = nextSection.dataset.slug || ''
+      const nextColor = colorMap[nextSlug] || '#000000'
+      
+      // How far has the section scrolled past the top of viewport?
+      const distancePastTop = Math.abs(elementTop)
+      const transitionRange = windowHeight * 0.6 // Transition happens over 60% of viewport
+      
+      // Progress: 0 = just started scrolling, 1 = fully transitioned
+      const progress = Math.min(1, distancePastTop / transitionRange)
+      
+      bgColor = interpolateColor(currentColor, nextColor, progress)
+      contentOpacity = 1 - progress
+      
+      // Fade in next section's content as this one fades out
+      const nextContent = nextSection.querySelector('.project-content') as HTMLElement
+      if (nextContent) {
+        nextContent.style.opacity = progress.toString()
+        nextContent.style.pointerEvents = progress > 0.1 ? 'auto' : 'none'
+      }
+    }
+    
+    // Apply background color
+    section.style.backgroundColor = bgColor
+    
+    // Apply content opacity for current section
+    const content = section.querySelector('.project-content') as HTMLElement
+    if (content) {
+      content.style.opacity = contentOpacity.toString()
+      content.style.pointerEvents = contentOpacity > 0.1 ? 'auto' : 'none'
+    }
+  })
+}
+
 // 1) Markdown as Vue components
 const markdownModules = import.meta.glob('../../../works/**/index.md', {
   eager: true
@@ -89,6 +177,17 @@ for (const path in markdownFiles) {
     bg
   })
 }
+
+// Add scroll listener on mount
+onMounted(() => {
+  window.addEventListener('scroll', handleScrollColorTransition, { passive: true })
+  // Initial call to set colors on first load
+  handleScrollColorTransition()
+  
+  return () => {
+    window.removeEventListener('scroll', handleScrollColorTransition)
+  }
+})
 
 
 </script>

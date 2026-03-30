@@ -7,18 +7,16 @@ html:has(.landing) {
   background-color: #000000;
 }
 
-/* per-work background colors by slug */
-.project-section[data-slug="DefensiveMode"] {
-  background-color: #816C5B !important;
-  background: #816C5B !important;
+/* All sections will have dynamic background colors via JavaScript */
+.project-section {
+  background-color: #000000;
+  will-change: background-color;
 }
 
-.project-section[data-slug="HeartOfGlass"] {
-  background-color: #161515 !important;
-}
-
-.project-section[data-slug="UpskirtQR"] {
-  background-color: #292929 !important;
+/* Content fade during transitions */
+.project-content {
+  transition: opacity 0.05s linear;
+  will-change: opacity;
 }
 
 /* DefensiveMode text color - darker blood red */
