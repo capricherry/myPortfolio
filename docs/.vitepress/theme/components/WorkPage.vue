@@ -280,7 +280,7 @@ onMounted(() => {
       <div
         class="project-section py-0"
         :data-slug="card.slug"
-        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent' }"
+        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent', paddingTop: '20vh' }"
       >
         <!-- centered content container (reduced horizontal padding ~10%) -->
         <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
