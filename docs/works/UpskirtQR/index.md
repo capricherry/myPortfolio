@@ -2,7 +2,7 @@
 
 
 ## 2024
-### abstract
+
 „Upskirt QR“ ist ein interaktives Conversation
 Piece, das sich anhand des Themas Upskirting
 mit Unsicherheit im öffentlichen Raum und der

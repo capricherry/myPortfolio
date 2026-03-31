@@ -2,6 +2,19 @@
 /* Landing Page CSS Styles */
 /* /////////////////////// */
 
+/* Global font overrides */
+h1 {
+  font-family: 'Roboto', sans-serif;
+}
+
+h2 {
+  font-family: 'Orbitron', sans-serif;
+}
+
+h3 {
+  font-family: 'Orbitron', sans-serif;
+}
+
 body {
   scroll-snap-type: y mandatory !important;
   scroll-behavior: smooth;
@@ -172,7 +185,7 @@ html:has(.landing) {
 
   h1 {
     text-align: center;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: 600;
     background: linear-gradient(
@@ -207,7 +220,7 @@ html:has(.landing) {
   h2 {
     display: block;
     width: fit-content;
-    font-family: Manrope, sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 32px;
     font-style: normal;
     font-weight: 600;
@@ -226,7 +239,7 @@ html:has(.landing) {
   h3 {
     color: #a9a9a9;
     text-align: center;
-    font-family: Inter, sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
@@ -251,7 +264,7 @@ html:has(.landing) {
     gap: 8px;
     border-radius: 8px;
     color: #fff;
-    font-family: Inter, sans-serif;
+    font-family: 'Nunito', sans-serif;
     font-size: 16px;
     font-style: normal;
     font-weight: 500;

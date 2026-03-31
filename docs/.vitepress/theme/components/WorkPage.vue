@@ -132,7 +132,7 @@ const handleScrollColorTransition = () => {
     if (absDistance <= fadeInDistance) {
       // Fade-in zone: ultra-aggressive curve to reach full opacity almost immediately
       const normalizedDistance = absDistance / fadeInDistance
-      contentOpacity = Math.pow(1 - normalizedDistance, 0.25)
+      contentOpacity = Math.pow(1 - normalizedDistance, 0.15)
     } else if (absDistance <= fadeOutDistance) {
       // Fade-out zone: smooth gentle curve
       const normalizedDistance = (absDistance - fadeInDistance) / (fadeOutDistance - fadeInDistance)
@@ -244,21 +244,21 @@ onMounted(() => {
         <!-- Top section: Title and content -->
         <div class="flex flex-col justify-start">
           <!-- Work Title and Author -->
-          <div class="mb-8">
-            <h2 class="text-5xl md:text-6xl font-bold mb-3">
+          <div class="mb-16">
+            <h2 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-tight">
               {{ card.title }}
             </h2>
-            <h3 :class="['text-lg md:text-xl font-medium', card.name === 'Anonymous' ? 'text-yellow-400 bg-yellow-900 px-2 py-1 rounded' : card.slug === 'HeartOfGlass' ? 'text-[#b62f23]' : card.slug === 'DefensiveMode' ? 'text-[#6B1C1C]' : 'text-gray-400']">
+            <h3 :class="['text-sm md:text-base font-normal tracking-wide uppercase letter-spacing-1', card.name === 'Anonymous' ? 'text-yellow-400 bg-yellow-900 px-3 py-1 rounded' : card.slug === 'HeartOfGlass' ? 'text-[#b62f23] opacity-80' : card.slug === 'DefensiveMode' ? 'text-[#6B1C1C] opacity-80' : 'text-gray-500']">
               {{ card.name }}
             </h3>
           </div>
 
           <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
-          <div class="work-content mb-12" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
+          <div class="work-content mb-16" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
             <component
               v-if="card.component"
               :is="card.component"
-              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-300', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
+              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-400 prose-p:leading-relaxed prose-p:mb-6', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
             />
           </div>
         </div>
