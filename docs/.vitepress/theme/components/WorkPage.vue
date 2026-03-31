@@ -254,11 +254,11 @@ onMounted(() => {
           </div>
 
           <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
-          <div class="work-content mb-16" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
+          <div class="work-content mb-16" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : card.slug === 'UpskirtQR' ? { color: '#999999', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : {}">
             <component
               v-if="card.component"
               :is="card.component"
-              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-400 prose-p:leading-relaxed prose-p:mb-6', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
+              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-400 prose-p:leading-relaxed prose-p:mb-6 prose-p:font-normal prose-p:font-mono prose-li:font-normal prose-li:font-mono prose-dd:font-normal prose-dt:font-normal prose-blockquote:font-normal', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
             />
           </div>
         </div>

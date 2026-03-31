@@ -146,7 +146,7 @@ watch(
       :x="dotPosition.x"
       :y="dotPosition.y + 15"
       fill="#a3a3a3"
-      font-family="Nunito, sans-serif"
+      font-family="IBM Plex Mono, monospace"
       font-size="11px"
       font-style="normal"
       font-weight="400"
