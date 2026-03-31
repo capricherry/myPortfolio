@@ -115,33 +115,34 @@ const handleScrollColorTransition = () => {
     if (!content || !snapContent) return
     
     const snapRect = snapContent.getBoundingClientRect()
-    const snapTop = snapRect.top
     const snapHeight = snapRect.height
-    const snapCenter = snapTop + snapHeight / 2
+    const snapCenter = snapRect.top + snapHeight / 2
     const viewportCenter = windowHeight / 2
     
-    // Calculate how far from center (0 = perfectly centered, increases as distance increases)
-    const distanceFromCenter = snapCenter - viewportCenter // signed distance (negative = above center, positive = below)
-    const maxFadeDistance = windowHeight * 0.3 // Fade over 30vh
-    const fadeInDistance = windowHeight * 0.18 // Fade-in starts even earlier
+    // Calculate how far from center (0 = perfectly centered)
+    const absDistance = Math.abs(snapCenter - viewportCenter)
+    const isLastSection = index === projectSections.length - 1
     
-    // Determine if moving toward center or away (based on distance sign and scroll direction)
-    const absDistance = Math.abs(distanceFromCenter)
-    const isMovingTowardCenter = (distanceFromCenter > 0 && currentScrollDirection > 0) || (distanceFromCenter < 0 && currentScrollDirection < 0)
+    // Asymmetric fade: starts fading in at 16vh, fades out over 24vh
+    const fadeInDistance = windowHeight * 0.16
+    const fadeOutDistance = windowHeight * 0.24
     
     let contentOpacity: number
     
-    if (isMovingTowardCenter) {
-      // Fade-in: starts earlier and reaches full opacity aggressively
-      const normalizedDistance = Math.min(1, absDistance / fadeInDistance)
-      contentOpacity = Math.pow(1 - normalizedDistance, 0.4) // Aggressive curve reaches 1 quickly
-    } else {
-      // Fade-out: slower using full distance
-      const normalizedDistance = Math.min(1, absDistance / maxFadeDistance)
+    if (absDistance <= fadeInDistance) {
+      // Fade-in zone: ultra-aggressive curve to reach full opacity almost immediately
+      const normalizedDistance = absDistance / fadeInDistance
+      contentOpacity = Math.pow(1 - normalizedDistance, 0.25)
+    } else if (absDistance <= fadeOutDistance) {
+      // Fade-out zone: smooth gentle curve
+      const normalizedDistance = (absDistance - fadeInDistance) / (fadeOutDistance - fadeInDistance)
       contentOpacity = easeInQuart(1 - normalizedDistance)
+    } else {
+      // Beyond fade-out distance: fully transparent except last section
+      contentOpacity = isLastSection && (snapCenter - viewportCenter) > 0 ? 1 : 0
     }
     
-    content.style.opacity = contentOpacity.toString()
+    content.style.opacity = Math.max(0, contentOpacity).toString()
     content.style.pointerEvents = contentOpacity > 0.5 ? 'auto' : 'none'
   })
 }
@@ -232,7 +233,7 @@ onMounted(() => {
       <div
         class="project-section py-0"
         :data-slug="card.slug"
-        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent', marginBottom: '150vh' }"
+        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent', marginBottom: i === cards.length - 1 ? '0vh' : '180vh' }"
       >
         <!-- centered content container -->
         <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 flex flex-col justify-center text-white">

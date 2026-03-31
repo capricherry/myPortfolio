@@ -16,10 +16,10 @@ html {
 html:has(.landing) {
   --vp-c-bg: #101010;
   background-color: #000000;
-  scroll-snap-type: y proximity !important;
+  scroll-snap-type: y mandatory !important;
   scroll-behavior: auto;
   scroll-padding-top: 0;
-  scroll-padding-bottom: 100vh;
+  scroll-padding-bottom: 0;
 }
 
 /* All sections will have dynamic background colors via JavaScript */
@@ -38,7 +38,7 @@ html:has(.landing) {
 .snap-content {
   scroll-snap-align: center;
   scroll-snap-stop: always;
-  scroll-margin: 0;
+  scroll-margin: 8vh 0;
 }
 
 /* Unified background layer with smooth color transition and snap effect */
