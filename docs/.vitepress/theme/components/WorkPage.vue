@@ -224,10 +224,10 @@ onMounted(() => {
       <div
         class="project-section py-0"
         :data-slug="card.slug"
-        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent', paddingTop: '20vh' }"
+        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent' }"
       >
         <!-- centered content container (reduced horizontal padding ~10%) -->
-        <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end text-white project-content">
+        <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center text-white project-content">
       <!-- LEFT COLUMN: Text Content -->
       <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
         <!-- Top section: Title and content -->
