@@ -42,6 +42,12 @@ const interpolateColor = (color1: string, color2: string, factor: number) => {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+let lastScrollY = 0
+
+// Easing functions for smooth professional animations
+const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4)
+const easeInQuart = (t: number) => t * t * t * t
+
 // Handle scroll color transitions
 const handleScrollColorTransition = () => {
   const backgroundLayer = document.getElementById('background-transition') as HTMLElement
@@ -50,90 +56,92 @@ const handleScrollColorTransition = () => {
   
   if (!backgroundLayer || projectSections.length === 0) return
   
-  const transitionRange = windowHeight * 12
+  // Current scroll position (use top of viewport for color transition start)
+  const scrollPos = window.scrollY
+  const currentScrollDirection = scrollPos > lastScrollY ? 1 : -1 // 1 = down, -1 = up
+  lastScrollY = scrollPos
+  
   let currentBgColor = colorMap[projectSections[0]?.dataset.slug || ''] || '#816C5B'
   
-  // Find active section and blend colors during transitions
-  for (let index = 0; index < projectSections.length; index++) {
-    const section = projectSections[index]
-    const rect = section.getBoundingClientRect()
-    const elementTop = rect.top
-    const elementBottom = rect.bottom
-    const slug = section.dataset.slug || ''
+  // Find which section we're in and transition to next
+  for (let i = 0; i < projectSections.length; i++) {
+    const section = projectSections[i]
+    const sectionTop = section.offsetTop
+    const sectionHeight = section.offsetHeight
+    const sectionBottom = sectionTop + sectionHeight
     
-    // Get the actual content bounds (ignoring padding)
-    const content = section.querySelector('.project-content') as HTMLElement
-    const contentRect = content?.getBoundingClientRect()
-    const contentTop = contentRect?.top || 0
-    const contentBottom = contentRect?.bottom || 0
-    
-    // Prioritize snap: if content is in comfortable viewing range, snap to it
-    if (contentTop >= -100 && contentTop <= windowHeight * 0.6) {
-      currentBgColor = colorMap[slug] || '#000000'
-      break
-    }
-    // During transition between sections, blend colors smoothly
-    else if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
-      const nextSlug = projectSections[index + 1].dataset.slug || ''
-      const color1 = colorMap[slug] || '#000000'
-      const color2 = colorMap[nextSlug] || '#000000'
-      const progress = Math.min(1, Math.abs(elementTop) / transitionRange)
-      currentBgColor = interpolateColor(color1, color2, progress)
+    // Check if scroll position is within or past this section
+    if (scrollPos < sectionBottom) {
+      const currentSlug = section.dataset.slug || ''
+      const color1 = colorMap[currentSlug] || '#000000'
+      
+      // If we're in the transition/gap area and there's a next section, interpolate
+      if (i < projectSections.length - 1) {
+        const nextSection = projectSections[i + 1]
+        const nextSlug = nextSection.dataset.slug || ''
+        const color2 = colorMap[nextSlug] || '#000000'
+        
+        // Calculate progress through this section (including the gap)
+        const progress = (scrollPos - sectionTop) / sectionHeight
+        
+        if (progress >= 0 && progress <= 1) {
+          currentBgColor = interpolateColor(color1, color2, progress)
+        } else if (progress > 1) {
+          currentBgColor = color2
+        } else {
+          currentBgColor = color1
+        }
+      } else {
+        // Last section - stay on its color
+        currentBgColor = color1
+      }
       break
     }
   }
   
+  // Ensure we never go past the last section's color
+  if (scrollPos >= projectSections[projectSections.length - 1].offsetTop + projectSections[projectSections.length - 1].offsetHeight) {
+    const lastSlug = projectSections[projectSections.length - 1].dataset.slug || ''
+    currentBgColor = colorMap[lastSlug] || '#000000'
+  }
+  
   backgroundLayer.style.backgroundColor = currentBgColor
   
-  // Handle content visibility
+  // Handle content visibility - fade based on snap point position
   projectSections.forEach((section, index) => {
-    const rect = section.getBoundingClientRect()
-    const elementTop = rect.top
-    const elementBottom = rect.bottom
+    const snapContent = section.querySelector('.snap-content') as HTMLElement
     const content = section.querySelector('.project-content') as HTMLElement
     
-    if (!content) return
+    if (!content || !snapContent) return
     
-    let contentOpacity = 0
-    const progress = Math.min(1, Math.abs(elementTop) / transitionRange)
+    const snapRect = snapContent.getBoundingClientRect()
+    const snapTop = snapRect.top
+    const snapHeight = snapRect.height
+    const snapCenter = snapTop + snapHeight / 2
+    const viewportCenter = windowHeight / 2
     
-    // Check if previous section is transitioning to this one
-    if (index > 0) {
-      const prevSection = projectSections[index - 1]
-      const prevRect = prevSection.getBoundingClientRect()
-      const prevElementTop = prevRect.top
-      const prevElementBottom = prevRect.bottom
-      
-      if (prevElementTop < 0 && prevElementBottom > 0) {
-        contentOpacity = progress >= 0.65 ? (progress - 0.65) / 0.35 : 0
-      }
-      else {
-        // Normal visibility logic
-        if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
-          contentOpacity = Math.max(0, 1 - (progress / 0.65))
-        }
-        else if (elementTop <= 0 && elementBottom > 0) {
-          contentOpacity = 1
-        }
-        else if (elementTop > 0 && elementTop < windowHeight) {
-          contentOpacity = 1
-        }
-      }
-    }
-    else {
-      // First section - normal visibility
-      if (elementTop < 0 && elementBottom > 0 && index < projectSections.length - 1) {
-        contentOpacity = Math.max(0, 1 - (progress / 0.65))
-      }
-      else if (elementTop <= 0 && elementBottom > 0) {
-        contentOpacity = 1
-      }
-      else if (elementTop > 0 && elementTop < windowHeight) {
-        contentOpacity = 1
-      }
+    // Calculate how far from center (0 = perfectly centered, increases as distance increases)
+    const distanceFromCenter = snapCenter - viewportCenter // signed distance (negative = above center, positive = below)
+    const maxFadeDistance = windowHeight * 0.3 // Fade over 30vh
+    const fadeInDistance = windowHeight * 0.18 // Fade-in starts even earlier
+    
+    // Determine if moving toward center or away (based on distance sign and scroll direction)
+    const absDistance = Math.abs(distanceFromCenter)
+    const isMovingTowardCenter = (distanceFromCenter > 0 && currentScrollDirection > 0) || (distanceFromCenter < 0 && currentScrollDirection < 0)
+    
+    let contentOpacity: number
+    
+    if (isMovingTowardCenter) {
+      // Fade-in: starts earlier and reaches full opacity aggressively
+      const normalizedDistance = Math.min(1, absDistance / fadeInDistance)
+      contentOpacity = Math.pow(1 - normalizedDistance, 0.4) // Aggressive curve reaches 1 quickly
+    } else {
+      // Fade-out: slower using full distance
+      const normalizedDistance = Math.min(1, absDistance / maxFadeDistance)
+      contentOpacity = easeInQuart(1 - normalizedDistance)
     }
     
-    content.style.opacity = Math.max(0, contentOpacity).toString()
+    content.style.opacity = contentOpacity.toString()
     content.style.pointerEvents = contentOpacity > 0.5 ? 'auto' : 'none'
   })
 }
@@ -224,10 +232,12 @@ onMounted(() => {
       <div
         class="project-section py-0"
         :data-slug="card.slug"
-        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent' }"
+        :style="{ width: '100vw', marginLeft: 'calc(50% - 50vw)', backgroundColor: 'transparent', marginBottom: '150vh' }"
       >
-        <!-- centered content container (reduced horizontal padding ~10%) -->
-        <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center text-white project-content">
+        <!-- centered content container -->
+        <div class="min-h-screen mx-auto w-full max-w-6xl px-0 py-12 border-b border-gray-800 last:border-b-0 flex flex-col justify-center text-white">
+          <!-- snap target: wraps just the content without padding -->
+          <div class="snap-content project-content grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end">
       <!-- LEFT COLUMN: Text Content -->
       <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
         <!-- Top section: Title and content -->
@@ -253,7 +263,7 @@ onMounted(() => {
         </div>
 
         <!-- Bottom section: Smaller images -->
-        <div v-if="card.allImages.length >= 1 || card.image" :class="['flex gap-6 h-64 items-center', card.slug === 'HeartOfGlass' ? 'w-3/4' : 'ml-0 mr-auto']">
+        <div v-if="card.allImages.length >= 1 || card.image" :class="['flex gap-6 h-64 items-end', card.slug === 'HeartOfGlass' ? 'w-3/4' : 'ml-0 mr-auto']">
           <template v-if="card.slug === 'HeartOfGlass'">
             <img
               :src="card.allImages.find(img => img.includes('closeup'))"
@@ -297,7 +307,7 @@ onMounted(() => {
       </div>
 
       <!-- RIGHT COLUMN: Large Hero Image -->
-      <div v-if="card.image || (card.slug === 'DefensiveMode' && card.allImages[0])" :class="['flex items-start', card.slug === 'HeartOfGlass' ? 'md:order-1 justify-start' : 'md:order-2 justify-end']">
+      <div v-if="card.image || (card.slug === 'DefensiveMode' && card.allImages[0])" :class="['flex items-end', card.slug === 'HeartOfGlass' ? 'md:order-1 justify-start' : 'md:order-2 justify-end']">
         <img
           :src="card.slug === 'DefensiveMode' ? card.allImages[0] : card.image"
           alt="cover image"
@@ -305,6 +315,7 @@ onMounted(() => {
           class="h-auto object-cover"
         />
       </div>
+          </div>
         </div>
       </div>
     </div>
