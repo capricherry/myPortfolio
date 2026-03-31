@@ -23,11 +23,29 @@ h5,
 h6 {
   font-family: 'Orbitron', sans-serif !important;
   margin-top: 0 !important;
-  margin-bottom: 1.5rem !important;
   line-height: 1.2 !important;
 }
 
-/* All prose headings - Orbitron */
+/* Refined heading margins */
+h1 {
+  margin-bottom: 1.75rem !important;
+}
+
+h2 {
+  margin-bottom: 1rem !important;
+}
+
+h3, h4, h5, h6 {
+  margin-bottom: 0.875rem !important;
+}
+
+/* Date headings (h2 when first in content) - tighter spacing */
+.work-content h2:first-of-type,
+.project-content h2:first-of-type {
+  margin-bottom: 0.5rem !important;
+}
+
+/* All prose headings - Orbitron with refined margins */
 .prose h1,
 .prose h2,
 .prose h3,
@@ -54,8 +72,41 @@ h6 {
 .project-content h6 {
   font-family: 'Orbitron', sans-serif !important;
   margin-top: 0 !important;
-  margin-bottom: 1.5rem !important;
   line-height: 1.2 !important;
+}
+
+/* Refined prose heading spacing */
+.prose h1,
+.prose-invert h1,
+.work-content h1,
+.project-content h1 {
+  margin-bottom: 1.75rem !important;
+}
+
+.prose h2,
+.prose h3,
+.prose-invert h2,
+.prose-invert h3,
+.work-content h2,
+.work-content h3,
+.project-content h2,
+.project-content h3 {
+  margin-bottom: 1rem !important;
+}
+
+.prose h4,
+.prose h5,
+.prose h6,
+.prose-invert h4,
+.prose-invert h5,
+.prose-invert h6,
+.work-content h4,
+.work-content h5,
+.work-content h6,
+.project-content h4,
+.project-content h5,
+.project-content h6 {
+  margin-bottom: 0.875rem !important;
 }
 
 /* Explicitly override ALL prose variants */
@@ -66,23 +117,43 @@ h6 {
   font-style: normal !important;
 }
 
+/* Refined body text margins for better breathing room */
 .prose p {
-  margin-bottom: 1rem !important;
+  margin-bottom: 1.25rem !important;
   margin-top: 0 !important;
+  line-height: 1.65 !important;
 }
 
+/* Tighter spacing for paragraphs after headings or dates */
+.prose h2:first-of-type + p,
+.prose h3 + p,
+.prose h4 + p {
+  margin-bottom: 1.25rem !important;
+}
+
+/* Refined list spacing */
 .prose li {
-  margin-bottom: 0.5rem !important;
+  margin-bottom: 0.75rem !important;
+  line-height: 1.6 !important;
+}
+
+.prose ul,
+.prose ol {
+  margin-bottom: 1.25rem !important;
 }
 
 .prose dd,
 .prose dt {
-  margin-bottom: 0.5rem !important;
+  margin-bottom: 0.75rem !important;
 }
 
+/* Blockquotes with refined spacing */
 .prose blockquote {
-  margin-bottom: 1rem !important;
+  margin-bottom: 1.5rem !important;
   margin-top: 0 !important;
+  padding-left: 1.5rem !important;
+  border-left: 2px solid currentColor !important;
+  opacity: 0.9 !important;
 }
 
 .prose-invert,
@@ -93,8 +164,9 @@ h6 {
 }
 
 .prose-invert p {
-  margin-bottom: 1rem !important;
+  margin-bottom: 1.25rem !important;
   margin-top: 0 !important;
+  line-height: 1.65 !important;
 }
 
 .prose-base,
@@ -112,8 +184,14 @@ h6 {
 }
 
 .work-content p {
-  margin-bottom: 1rem !important;
+  margin-bottom: 1.25rem !important;
   margin-top: 0 !important;
+  line-height: 1.65 !important;
+}
+
+.work-content li {
+  margin-bottom: 0.75rem !important;
+  line-height: 1.6 !important;
 }
 
 .project-content,
@@ -124,8 +202,14 @@ h6 {
 }
 
 .project-content p {
-  margin-bottom: 1rem !important;
+  margin-bottom: 1.25rem !important;
   margin-top: 0 !important;
+  line-height: 1.65 !important;
+}
+
+.project-content li {
+  margin-bottom: 0.75rem !important;
+  line-height: 1.6 !important;
 }
 
 /* Enable scroll snapping on the main container */
@@ -164,11 +248,11 @@ html:has(.landing) {
 
 /* DefensiveMode text color - darker blood red */
 .project-section[data-slug="DefensiveMode"] .work-content {
-  color: #6B1C1C !important;
+  color: #850f00 !important;
 }
 
 .project-section[data-slug="DefensiveMode"] .work-content p {
-  color: #6B1C1C !important;
+  color: #850f00 !important;
 }
 
 .project-section[data-slug="DefensiveMode"] h1,
@@ -178,7 +262,7 @@ html:has(.landing) {
 .project-section[data-slug="DefensiveMode"] h5,
 .project-section[data-slug="DefensiveMode"] h6 {
   font-family: 'Orbitron', sans-serif !important;
-  color: #6B1C1C !important;
+  color: #850f00 !important;
 }
 
 /* HeartOfGlass text color */

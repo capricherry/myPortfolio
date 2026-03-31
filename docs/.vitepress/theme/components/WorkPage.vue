@@ -15,7 +15,7 @@ type Card = {
 
 // Color map for each section
 const colorMap: Record<string, string> = {
-  DefensiveMode: '#816C5B',
+  DefensiveMode: '#c7ae9f',
   HeartOfGlass: '#161515',
   UpskirtQR: '#292929'
 }
@@ -240,7 +240,7 @@ onMounted(() => {
           <!-- snap target: wraps just the content without padding -->
           <div class="snap-content project-content grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-end">
       <!-- LEFT COLUMN: Text Content -->
-      <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C' } : {}">
+      <div :class="['flex flex-col justify-between h-full', card.slug === 'HeartOfGlass' ? 'md:order-2' : 'md:order-1']" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23' } : card.slug === 'DefensiveMode' ? { color: '#850f00' } : {}">
         <!-- Top section: Title and content -->
         <div class="flex flex-col justify-start">
           <!-- Work Title and Author -->
@@ -248,17 +248,17 @@ onMounted(() => {
             <h2 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight tracking-tight">
               {{ card.title }}
             </h2>
-            <h3 :class="['text-sm md:text-base font-normal tracking-wide uppercase letter-spacing-1', card.name === 'Anonymous' ? 'text-yellow-400 bg-yellow-900 px-3 py-1 rounded' : card.slug === 'HeartOfGlass' ? 'text-[#b62f23] opacity-80' : card.slug === 'DefensiveMode' ? 'text-[#6B1C1C] opacity-80' : 'text-gray-500']">
+            <h3 :class="['text-sm md:text-base font-normal tracking-wide uppercase letter-spacing-1', card.name === 'Anonymous' ? 'text-yellow-400 bg-yellow-900 px-3 py-1 rounded' : card.slug === 'HeartOfGlass' ? 'text-[#b62f23] opacity-80' : card.slug === 'DefensiveMode' ? 'text-[#850f00] opacity-80' : 'text-gray-500']">
               {{ card.name }}
             </h3>
           </div>
 
           <!-- Markdown Content (hide top-level headings to avoid duplicate title) -->
-          <div class="work-content mb-16" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : card.slug === 'DefensiveMode' ? { color: '#6B1C1C', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : card.slug === 'UpskirtQR' ? { color: '#999999', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : {}">
+          <div class="work-content mb-16" :style="card.slug === 'HeartOfGlass' ? { color: '#b62f23', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : card.slug === 'DefensiveMode' ? { color: '#850f00', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : card.slug === 'UpskirtQR' ? { color: '#999999', fontFamily: 'Roboto Mono, monospace', fontWeight: 400 } : {}">
             <component
               v-if="card.component"
               :is="card.component"
-              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-400 prose-p:leading-relaxed prose-p:mb-4 prose-p:font-normal prose-p:font-mono prose-li:font-normal prose-li:font-mono prose-dd:font-normal prose-dt:font-normal prose-blockquote:font-normal prose-h1:mb-6 prose-h2:mb-6 prose-h3:mb-6', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
+              :class="['prose prose-base md:prose-lg max-w-none prose-p:leading-relaxed prose-p:mb-4 prose-p:font-normal prose-p:font-mono prose-li:font-normal prose-li:font-mono prose-dd:font-normal prose-dt:font-normal prose-blockquote:font-normal prose-h1:mb-6 prose-h2:mb-6 prose-h3:mb-6', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23] prose-p:!text-[#b62f23]' : card.slug === 'DefensiveMode' ? 'prose-p:!text-[#850f00] prose-headings:!text-[#850f00]' : card.slug === 'UpskirtQR' ? 'prose-p:!text-[#999999] prose-headings:!text-[#999999]' : 'prose-invert prose-headings:text-white']"
             />
           </div>
         </div>
