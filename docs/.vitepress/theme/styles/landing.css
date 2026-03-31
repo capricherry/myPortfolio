@@ -51,7 +51,7 @@ html:has(.landing) {
 .snap-content {
   scroll-snap-align: center;
   scroll-snap-stop: always;
-  scroll-margin: 8vh 0;
+  scroll-margin: 9vh 0;
 }
 
 /* Unified background layer with smooth color transition and snap effect */
