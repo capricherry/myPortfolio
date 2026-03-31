@@ -258,7 +258,7 @@ onMounted(() => {
             <component
               v-if="card.component"
               :is="card.component"
-              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-400 prose-p:leading-relaxed prose-p:mb-6 prose-p:font-normal prose-p:font-mono prose-li:font-normal prose-li:font-mono prose-dd:font-normal prose-dt:font-normal prose-blockquote:font-normal', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
+              :class="['prose prose-base md:prose-lg max-w-none prose-p:text-gray-400 prose-p:leading-relaxed prose-p:mb-4 prose-p:font-normal prose-p:font-mono prose-li:font-normal prose-li:font-mono prose-dd:font-normal prose-dt:font-normal prose-blockquote:font-normal prose-h1:mb-6 prose-h2:mb-6 prose-h3:mb-6', card.slug === 'HeartOfGlass' ? 'prose-headings:!text-[#b62f23]' : 'prose-invert prose-headings:text-white']"
             />
           </div>
         </div>

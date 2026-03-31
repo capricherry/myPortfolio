@@ -22,6 +22,40 @@ h4,
 h5,
 h6 {
   font-family: 'Orbitron', sans-serif !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.2 !important;
+}
+
+/* All prose headings - Orbitron */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6,
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3,
+.prose-invert h4,
+.prose-invert h5,
+.prose-invert h6,
+.work-content h1,
+.work-content h2,
+.work-content h3,
+.work-content h4,
+.work-content h5,
+.work-content h6,
+.project-content h1,
+.project-content h2,
+.project-content h3,
+.project-content h4,
+.project-content h5,
+.project-content h6 {
+  font-family: 'Orbitron', sans-serif !important;
+  margin-top: 0 !important;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.2 !important;
 }
 
 /* Explicitly override ALL prose variants */
@@ -32,11 +66,35 @@ h6 {
   font-style: normal !important;
 }
 
+.prose p {
+  margin-bottom: 1rem !important;
+  margin-top: 0 !important;
+}
+
+.prose li {
+  margin-bottom: 0.5rem !important;
+}
+
+.prose dd,
+.prose dt {
+  margin-bottom: 0.5rem !important;
+}
+
+.prose blockquote {
+  margin-bottom: 1rem !important;
+  margin-top: 0 !important;
+}
+
 .prose-invert,
 .prose-invert * {
   font-family: 'Roboto Mono', monospace !important;
   font-weight: 400 !important;
   font-style: normal !important;
+}
+
+.prose-invert p {
+  margin-bottom: 1rem !important;
+  margin-top: 0 !important;
 }
 
 .prose-base,
@@ -53,11 +111,21 @@ h6 {
   font-style: normal !important;
 }
 
+.work-content p {
+  margin-bottom: 1rem !important;
+  margin-top: 0 !important;
+}
+
 .project-content,
 .project-content * {
   font-family: 'Roboto Mono', monospace !important;
   font-weight: 400 !important;
   font-style: normal !important;
+}
+
+.project-content p {
+  margin-bottom: 1rem !important;
+  margin-top: 0 !important;
 }
 
 /* Enable scroll snapping on the main container */
@@ -109,6 +177,7 @@ html:has(.landing) {
 .project-section[data-slug="DefensiveMode"] h4,
 .project-section[data-slug="DefensiveMode"] h5,
 .project-section[data-slug="DefensiveMode"] h6 {
+  font-family: 'Orbitron', sans-serif !important;
   color: #6B1C1C !important;
 }
 
@@ -132,16 +201,19 @@ html:has(.landing) {
 .project-section[data-slug="HeartOfGlass"] h4,
 .project-section[data-slug="HeartOfGlass"] h5,
 .project-section[data-slug="HeartOfGlass"] h6 {
+  font-family: 'Orbitron', sans-serif !important;
   color: #b62f23 !important;
 }
 
 /* More specific prose targeting */
 .project-section[data-slug="HeartOfGlass"] .prose h2 {
+  font-family: 'Orbitron', sans-serif !important;
   color: #b62f23 !important;
 }
 
 /* Even more specific with work-content */
 .project-section[data-slug="HeartOfGlass"] .work-content h2 {
+  font-family: 'Orbitron', sans-serif !important;
   color: #b62f23 !important;
   opacity: 0.7;
 }
